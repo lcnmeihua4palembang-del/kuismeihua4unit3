@@ -22,11 +22,11 @@
   .bubble{position:absolute;border-radius:50%;opacity:.4;animation:floaty 12s ease-in-out infinite}
   @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-28px)}}
 
-  .screen{display:none;min-height:100vh;padding:20px}
+  .screen{display:none;min-height:100vh;padding:20px 20px 80px}
   .screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:16px;position:relative;z-index:1;animation:fadeUp .45s ease}
   @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-  #screen-game.screen.active{justify-content:flex-start;padding-top:22px;padding-bottom:40px}
+  #screen-game.screen.active{justify-content:flex-start;padding-top:22px;padding-bottom:80px}
 
   .card{
     background:#fff;border-radius:28px;padding:26px;width:100%;max-width:840px;
@@ -141,12 +141,32 @@
     pointer-events:none;animation:floatUp 1s ease-out forwards;text-shadow:0 2px 8px rgba(40,199,111,.35)}
   @keyframes floatUp{to{transform:translateY(-70px);opacity:0}}
 
+  /* ---------- FOOTER COPYRIGHT ---------- */
+  #copyright {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 8px 10px;
+    font-size: 0.72rem;
+    color: #7d8db3;
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: blur(6px);
+    border-top: 1px solid #e0eaff;
+    z-index: 999;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: 0.02em;
+  }
+
   @media(max-width:560px){
     .card{padding:20px;border-radius:22px}
     .option{font-size:.95rem;padding:11px 12px}
     .option .badge{flex:0 0 32px;height:32px;font-size:.9rem;border-radius:10px}
     .hud-item{min-width:80px;padding:6px 12px}
     .btn{padding:13px 24px;font-size:.98rem}
+    #copyright { font-size: 0.65rem; }
   }
 </style>
 </head>
@@ -229,6 +249,8 @@
   </section>
 
 </main>
+
+<footer id="copyright">Copyright(c) lcnpalembang-08994477998)</footer>
 
 <script>
 /* =========================================================
@@ -441,13 +463,13 @@ const QUESTIONS = [
    STATE
    ========================================================= */
 const state = {
-  quiz: [],          // <-- daftar soal yang sudah diacak (soal + opsi)
+  quiz: [],
   i: 0,
   score: 0,
   streak: 0,
   best: 0,
   correct: 0,
-  wrong: [],         // menyimpan indeks pada state.quiz
+  wrong: [],
   answered: false,
   started: false,
   finished: false
@@ -474,18 +496,14 @@ function buildShuffledQuiz(){
   return shuffledQuestions.map(q => {
     const correctSet = Array.isArray(q.a) ? q.a : [q.a];
 
-    // bungkus tiap opsi bersama status benar/salahnya
     const wrapped = q.opts.map((text, idx) => ({
       text,
       correct: correctSet.includes(idx)
     }));
 
-    // acak opsi
     const shuffledWrapped = shuffleArray(wrapped);
-
     const newOpts = shuffledWrapped.map(w => w.text);
 
-    // cari indeks baru untuk jawaban benar
     const newCorrectIdx = shuffledWrapped
       .map((w, i) => w.correct ? i : -1)
       .filter(i => i >= 0);
@@ -559,7 +577,6 @@ function rand(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
    ALUR PERMAINAN
    ========================================================= */
 function startQuiz(){
-  // >>> INI KUNCI PERUBAHANNYA: buat set soal baru yang sudah diacak
   state.quiz = buildShuffledQuiz();
 
   state.i = 0;
